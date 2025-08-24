@@ -13,30 +13,28 @@
       --btn-bg:#fff; --btn-done:#2ecc71;
     }
     html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,system-ui,sans-serif;
-background: linear-gradient(120deg, #2193b0, #6dd5ed);
-color: #fff;
-}
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,system-ui,sans-serif;
+      background: linear-gradient(120deg, #2193b0, #6dd5ed);
+      color: #fff;
+    }
     .wrap{ max-width:500px; margin:0 auto; padding:12px 14px 18px; }
     header{ display:flex; justify-content:center; align-items:center; padding:2px 0 5px; }
     header img{ max-width:250px; height:auto; display:block; }
     h1{ text-align:center; font-size:18px; margin:8px 0 16px; font-weight:700; }
 
-    /* Ligne (site à gauche, bouton heure à droite) */
-.row{
-  display: grid;
-  grid-template-columns: minmax(260px, 300px) auto; /* col. adresse fixe (max 300) */
-  justify-content: center;                           /* centre l’ensemble dans la ligne */
-  gap: 10px;                                          /* écart horizontal réduit */
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px dashed rgba(0,0,0,.15);
-}
+    .row{
+      display: grid;
+      grid-template-columns: minmax(260px, 300px) auto;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(0,0,0,.15);
+    }
 
-    /* Boutons : blanc, arrondi, contour noir */
     .btn{
       display:block; background:var(--btn-bg); color:var(--txt);
       border:2px solid var(--border); border-radius:1000px; padding:10px 14px;
@@ -44,8 +42,6 @@ color: #fff;
       touch-action:manipulation; -webkit-tap-highlight-color:transparent;
     }
     .btn:active{ transform:translateY(1px); }
-
-
 
     .time-btn{ min-width:76px; text-align:center; font-size:14px; padding:10px 14px; }
     .time-btn.done{ background:var(--btn-done); color:#fff; border-color:#0e8b47; }
@@ -56,42 +52,51 @@ color: #fff;
       .time-btn{ min-width:70px; padding:10px 12px; font-size:13px; }
       .site-btn{ padding:10px 12px; }
     }
-.site-btn {
-  max-width: 300px;
-  text-align: center;
-  white-space: normal;
-  margin: 0;                  /* plus de centrage */
-  padding-left: 10px;         /* petit recul à gauche */
-  padding-right: 10px;        /* symétrie */
-  background-color: #f5f5dc;
-}
-.nav-links {
-  display: flex;
-  justify-content: center;
-  margin: 5px 0 10px;
-}
-.nav-btn {
-  background: #333;
-  color: #fff;
-  border: 2px solid #FFF;
-  border-radius: 1000px;
-  padding: 8px 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
+    .site-btn {
+      max-width: 300px;
+      text-align: center;
+      white-space: normal;
+      margin: 0;
+      padding-left: 10px;
+      padding-right: 10px;
+      background-color: #f5f5dc;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 5px 0 15px;
+    }
+    .nav-btn {
+      background: #333;
+      color: #fff;
+      border: 2px solid #FFF;
+      border-radius: 1000px;
+      padding: 8px 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .reset-btn {
+      background: #b22222; /* couleur différente si tu veux */
+      border: 2px solid #fff;
+      color: #fff;
+    }
+    .reset-btn:hover {
+      background: #d32f2f;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header><img src="images/logo artemis.png" alt="Logo"></header>
-<div class="nav-links">
-  <a class="btn nav-btn" href="https://remi-mason.github.io/Rondes-Index/" target="_blank" rel="noopener">Index</a>
-</div>
-    <h1>Rondes Libercourt
-(Samedi)</h1>
+    <div class="nav-links">
+      <a class="btn nav-btn" href="https://remi-mason.github.io/Rondes-Index/" target="_blank" rel="noopener">Index</a>
+      <button id="reset-btn" class="btn nav-btn reset-btn">Réinitialiser</button>
+    </div>
+    <h1>Rondes Libercourt (Samedi)</h1>
 
-    <!-- ZI Libercourt — 20:15 -->
+   <!-- ZI Libercourt — 20:15 -->
     <div class="row">
       <a class="btn site-btn" target="_blank" rel="noopener"
          href="waze://?ll=50.490439,2.99401&navigate=yes">
@@ -181,15 +186,11 @@ color: #fff;
       <button class="btn time-btn" data-id="t0345">04:00</button>
     </div>
 
-
 <script>
-  // === Web Audio API (ultra faible latence) ===
   const ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive" });
+  const STORAGE_KEY = "rondesState_libercourt_samedi"; // clé unique pour cette page
 
-  // Déverrouille l'audio sur le 1er geste utilisateur (nécessaire sur mobile)
-  function unlockAudio() {
-    if (ctx.state === "suspended") ctx.resume();
-  }
+  function unlockAudio() { if (ctx.state === "suspended") ctx.resume(); }
   window.addEventListener("pointerdown", unlockAudio, { passive: true });
   window.addEventListener("keydown",   unlockAudio, { passive: true });
 
@@ -202,18 +203,33 @@ color: #fff;
   const buffers = { click: null, success: null };
   let successPlayed = false;
 
- function play(buf, gainValue = 1.0){
-  if (!buf) return;
-  const src = ctx.createBufferSource();
-  src.buffer = buf;
+  function play(buf, gainValue = 1.0){
+    if (!buf) return;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = gainValue;
+    src.connect(gainNode).connect(ctx.destination);
+    src.start(0);
+  }
 
-  // on ajoute un "volume"
-  const gainNode = ctx.createGain();
-  gainNode.gain.value = gainValue; // 1.0 = normal, >1 = plus fort
+  function saveState() {
+    const states = {};
+    document.querySelectorAll(".time-btn").forEach(btn => {
+      states[btn.dataset.id] = btn.classList.contains("done");
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+  }
 
-  src.connect(gainNode).connect(ctx.destination);
-  src.start(0);
-}
+  function loadState() {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    document.querySelectorAll(".time-btn").forEach(btn => {
+      if (saved[btn.dataset.id]) {
+        btn.classList.add("done");
+        btn.setAttribute("aria-pressed", "true");
+      }
+    });
+  }
 
   function areAllDone() {
     return [...document.querySelectorAll(".time-btn")]
@@ -222,78 +238,45 @@ color: #fff;
 
   function toggleBtn(e) {
     const btn = e.currentTarget;
-
-    // son clic instantané
-    play(buffers.click, 0.5); // réduit à 50%
-
-    // bascule visuelle
+    play(buffers.click, 0.5);
     btn.classList.toggle("done");
     btn.setAttribute("aria-pressed", btn.classList.contains("done") ? "true" : "false");
 
-    // son succès une seule fois quand tout est vert
     if (areAllDone()) {
       if (!successPlayed) {
-        play(buffers.success, 2.0); // volume doublé
+        play(buffers.success, 2.0);
         successPlayed = true;
       }
     } else {
       successPlayed = false;
     }
+    saveState();
   }
 
-  // Init après chargement du DOM
   (async function init() {
-    // Précharge/Decode les sons en mémoire (évite le lag)
     [buffers.click, buffers.success] = await Promise.all([
       loadBuffer("sounds/bubble.mp3"),
       loadBuffer("sounds/success.mp3"),
     ]);
 
-    // Branche les boutons
     document.querySelectorAll(".time-btn").forEach(btn => {
       btn.addEventListener("click", toggleBtn);
       btn.setAttribute("role","button");
       btn.setAttribute("aria-pressed","false");
       btn.classList.remove("done");
     });
+
+    loadState();
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      document.querySelectorAll(".time-btn").forEach(btn => {
+        btn.classList.remove("done");
+        btn.setAttribute("aria-pressed", "false");
+      });
+      successPlayed = false;
+    });
   })();
-   document.addEventListener("DOMContentLoaded", function(){
-    const dropdown = document.querySelector(".dropdown");
-    const btn = dropdown.querySelector(".nav-btn");
-    
-    btn.addEventListener("click", function(){
-      dropdown.classList.toggle("open");
-    });
-
-    // optionnel : refermer si on clique ailleurs
-    document.addEventListener("click", function(e){
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
-      }
-    });
-  });
 </script>
-
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
